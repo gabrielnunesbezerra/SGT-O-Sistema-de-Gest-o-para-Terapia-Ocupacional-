@@ -8,12 +8,21 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.post('/api/login', (req, res) => {
     const { tipo, login, senha } = req.body;
     
-
-    if (senha === '123456') {
-        return res.json({ sucesso: true, mensagem: `Login de ${tipo} autorizado!` });
+    if (tipo === 'profissional') {
+        const usuariosValidos = ['lucas daniel', 'gabriel tavares'];
+        
+        // Verifica se o usuário digitado está na lista e se a senha confere
+        if (usuariosValidos.includes(login.toLowerCase()) && senha === '321123') {
+            return res.json({ sucesso: true, redirecionar: '/gestao.html' });
+        }
+        return res.status(401).json({ sucesso: false, mensagem: "Usuário ou senha incorretos." });
     }
-    
-    res.status(401).json({ sucesso: false, mensagem: "Senha incorreta." });
+
+    if (tipo === 'responsavel' && senha) {
+        return res.json({ sucesso: true, redirecionar: '/gestao.html' });
+    }
+
+    res.status(401).json({ sucesso: false, mensagem: "Acesso negado." });
 });
 
-app.listen(3000, () => console.log(' Servidor rodando em http://localhost:3000'));
+app.listen(3000, () => console.log('Servidor rodando em http://localhost:3000'));
